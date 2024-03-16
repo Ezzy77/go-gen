@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"os/exec"
 	"os/user"
 	"path/filepath"
 )
@@ -43,6 +44,34 @@ and usage of using your command. For example:
 		}
 		log.Println("Directory created at:", dir)
 
+		// creates main.go file
+		file, err := os.Create(dir + "/main.go")
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+
+		mainFileContent :=
+			`package main
+
+			import (
+				"fmt"
+			)
+			
+			func main() {
+				fmt.Println("Hello world!")
+			}`
+
+		_, err = fmt.Fprintf(file, mainFileContent)
+		if err != nil {
+			return err
+		}
+
+		err = initGoModule(dir)
+		if err != nil {
+			return err
+		}
+
 		return nil
 	},
 }
@@ -51,13 +80,28 @@ func init() {
 	newCmd.Flags().StringP("name", "n", "", "project name")
 	rootCmd.AddCommand(newCmd)
 
-	// Here you will define your flags and configuration settings.
+}
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// newCmd.PersistentFlags().String("foo", "", "A help for foo")
+// initGoModule initialises a Go module for the project located in the given project directory.
+// It creates a command to run the "go mod init" command and sets the project directory as the working directory.
+// If an error occurs while executing the command, it prints an error message and returns the error.
+// On successful initialisation, it prints a success message and returns nil.
+func initGoModule(projectDir string) error {
+	cmd := exec.Command("go", "mod", "init",
+		"github.com/username/your_project_name")
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// newCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	cmd.Dir = projectDir
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(output))
+		return err
+	}
+	//err := cmd.Run()
+	//if err != nil {
+	//	fmt.Println("error initializing go module")
+	//	fmt.Println("here the error", err)
+	//	return err
+	//}
+	fmt.Println("Go module initialized successfully")
+	return nil
 }
