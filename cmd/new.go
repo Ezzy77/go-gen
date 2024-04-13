@@ -17,11 +17,9 @@ import (
 var newCmd = &cobra.Command{
 	Use:   "new",
 	Short: "new create a new golang project",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Long: `new create a new golang project:
 .`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("new called")
 		projectName, err := cmd.Flags().GetString("name")
 		if err != nil {
 			fmt.Println("error parsing project name")
@@ -34,18 +32,18 @@ and usage of using your command. For example:
 			return err
 		}
 		// Define path for new directory
-		dir := filepath.Join(usr.HomeDir, projectName)
+		dirPath := filepath.Join(usr.HomeDir, projectName)
 
 		// creating directory at the root user home directory
-		err = os.Mkdir(dir, 0755)
+		err = os.Mkdir(dirPath, 0755)
 		if err != nil {
 			fmt.Printf("error creating new directory %v\n", err)
 			return err
 		}
-		log.Println("Directory created at:", dir)
+		log.Println("Directory created at:", dirPath)
 
 		// creates main.go file
-		file, err := os.Create(dir + "/main.go")
+		file, err := os.Create(dirPath + "/main.go")
 		if err != nil {
 			return err
 		}
@@ -67,7 +65,7 @@ and usage of using your command. For example:
 			return err
 		}
 
-		err = initGoModule(dir)
+		err = initGoModule(dirPath)
 		if err != nil {
 			return err
 		}
