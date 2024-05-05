@@ -1,10 +1,9 @@
-/*
-Copyright © 2024 Elisio Cabral
-*/
 package cmd
 
 import (
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
+	"go-gen/cmd/utils"
 	"log"
 	"os"
 	"os/user"
@@ -13,42 +12,86 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// createCmd represents the create command
+// createCmd represents the custom command
 var createCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create command create a new Go project",
-	Long: `The create command initialises a new Golang backend project, when
-			run without argument, default structure will be generated.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("create called")
+	Short: "Create command allows you to generate a new Rest API backend using Golang.",
+	Long: `Create command allows you to generate a new Rest API backend using Golang, 
+			with options to chose preferred routing framework.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		projectName, err := cmd.Flags().GetString("name")
 
-		// Get current user
+		if err != nil {
+			fmt.Println("error parsing project name")
+			return err
+		}
+
 		usr, err := user.Current()
 		if err != nil {
-			log.Fatalf("Cannot get current user: %v", err)
+			fmt.Println("error getting system user")
+			return err
 		}
 		// Define path for new directory
-		dir := filepath.Join(usr.HomeDir, "testDir")
+		dirPath := filepath.Join(usr.HomeDir, projectName)
 
-		// Creating directory
-		err = os.Mkdir(dir, 0755)
+		// creating project directory at the root user home directory
+		err = os.Mkdir(dirPath, 0755)
 		if err != nil {
-			log.Fatalf("Error creating directory: %v", err)
+			fmt.Printf("error creating new directory %v\n", err)
+			return err
 		}
-		log.Println("Directory created at:", dir)
+		log.Println("Directory created at:", dirPath)
+
+		// Prompt the user for options
+		var options struct {
+			RoutingFramework string
+			Database         string
+		}
+		qs := []*survey.Question{
+			{
+				Name: "RoutingFramework",
+				Prompt: &survey.Select{
+					Message: "Select a routing framework:",
+					Options: []string{"gorilla/mux", "Gin", "Echo"},
+				},
+			},
+			{
+				Name: "Database",
+				Prompt: &survey.Select{
+					Message: "Select a database:",
+					Options: []string{"None"},
+				},
+			},
+		}
+		if err := survey.Ask(qs, &options); err != nil {
+			return err
+		}
+
+		// Print selected options
+		fmt.Println("Selected routing framework:", options.RoutingFramework)
+		fmt.Println("Selected database:", options.Database)
+
+		// Generate project folder
+		err = utils.GenerateProjectFolder(dirPath)
+		if err != nil {
+			return err
+		}
+		// Generate boilerplate code based on selected options
+		err = utils.GenerateCustomBoilerplate(options.RoutingFramework, options.Database, dirPath)
+		if err != nil {
+			return err
+		}
+
+		err = utils.InitGoModule(dirPath)
+		if err != nil {
+			return err
+		}
+
+		return nil
 	},
 }
 
 func init() {
+	createCmd.Flags().StringP("name", "n", "", "project name")
 	rootCmd.AddCommand(createCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// createCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// createCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
