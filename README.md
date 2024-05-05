@@ -1,4 +1,4 @@
-# go-gen CLI Tool
+# go-gen CLI
 
 ## Overview
 
