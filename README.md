@@ -62,8 +62,3 @@ After selecting the routing framework and database, `go-gen` will print the sele
 - `go.mod` and `go.sum`: Go module files.
 
 ## Dependencies
-
-`go-gen` depends on the following libraries:
-
-- Cobra: For building CLI applications.
-- Survey: For interactive prompts.
