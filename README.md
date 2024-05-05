@@ -4,7 +4,31 @@
 
 `go-gen` is a CLI tool for generating Restful API backends in Golang. It provides a convenient way to create a new Golang project with options to choose preferred routing frameworks.
 
-## Installation
+## Installation 1
+
+The latest binary releases are available on the [releases](https://github.com/Ezzy77/go-gen/releases/tag/v1.0.0) page.
+
+### Windows
+
+Download the `.exe` binary appropriate for your system. For most users, this is likely the 64-bit version.
+
+After downloading, move it to your local bin folder usr/local/bin.
+
+### Mac
+
+Download the macos binary.
+
+After downloading, move it to your local bin folder usr/local/bin
+
+### Linux
+
+Download the linux binary.
+
+After downloading, move it to your local bin folder usr/local/bin
+
+
+
+## Installation 2
 
 To install `go-gen`, you need to have Go installed on your system. Then, run the following command:
 
