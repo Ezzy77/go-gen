@@ -15,7 +15,11 @@ var rootCmd = &cobra.Command{
 	Short: "go-gen is a CLI tool for generating Restful API in Golang",
 	Long: `go-gen is a CLI library for Go that empowers applications.
 			This application is a tool to generate the needed files
-			to quickly create a Cobra application.`,
+			to quickly create a Cobra application.
+
+			Example: go-gen create -n <your_project_name> 
+				or go-gen create --name <your_project_name>		
+`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

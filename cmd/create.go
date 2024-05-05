@@ -17,7 +17,12 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create command allows you to generate a new Rest API backend using Golang.",
 	Long: `Create command allows you to generate a new Rest API backend using Golang, 
-			with options to chose preferred routing framework.`,
+			with options to chose preferred routing framework.
+
+			Example: go-gen create -n <your_project_name> 
+				or go-gen create --name <your_project_name>	
+
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		projectName, err := cmd.Flags().GetString("name")
 
